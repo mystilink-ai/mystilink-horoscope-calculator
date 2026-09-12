@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mystilink</groupId>
+  <artifactId>horoscope</artifactId>
+  <version>0.1.0</version>
+  <name>MystiLink Horoscope</name>
+  <description>CLI binding for mystilink-horoscope calculator</description>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+    </license>
+  </licenses>
+  <properties>
+    <maven.compiler.release>11</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>

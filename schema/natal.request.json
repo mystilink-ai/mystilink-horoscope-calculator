@@ -1,0 +1,22 @@
+{
+  "title": "NatalChartRequest",
+  "type": "object",
+  "required": ["datetime", "timezone", "lat", "lon"],
+  "properties": {
+    "datetime": {
+      "type": "string",
+      "description": "Local birth datetime YYYY-MM-DD HH:MM"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone name"
+    },
+    "lat": { "type": "number" },
+    "lon": { "type": "number" },
+    "house_system": { "type": "string", "default": "P" },
+    "zodiac": { "type": "string", "enum": ["tropical", "sidereal"], "default": "tropical" },
+    "sidereal_mode": { "type": "string", "default": "lahiri" },
+    "true_solar_time": { "type": "boolean", "default": false },
+    "no_aspects": { "type": "boolean", "default": false }
+  }
+}

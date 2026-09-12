@@ -1,0 +1,29 @@
+{
+  "title": "NatalChartResponse",
+  "type": "object",
+  "required": ["kind", "points", "asc", "mc", "house_cusps"],
+  "properties": {
+    "kind": { "const": "natal" },
+    "local_datetime": { "type": "string" },
+    "utc_datetime": { "type": "string" },
+    "julian_day_ut": { "type": "number" },
+    "latitude": { "type": "number" },
+    "longitude": { "type": "number" },
+    "house_system": { "type": "string" },
+    "zodiac_mode": { "type": "string" },
+    "asc": { "type": "object" },
+    "mc": { "type": "object" },
+    "house_cusps": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "points": { "type": "array" },
+    "aspects": { "type": "array" },
+    "skipped_points": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

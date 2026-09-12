@@ -1,0 +1,11 @@
+{
+  "birth": {
+    "datetime": "1990-06-15 14:30",
+    "timezone": "Asia/Shanghai",
+    "lat": 31.2304,
+    "lon": 121.4737
+  },
+  "daily_date": "2026-09-12",
+  "monthly": { "year": 2026, "month": 9 },
+  "notes": "Synthetic fixture coordinates for local smoke tests; not a real person profile."
+}

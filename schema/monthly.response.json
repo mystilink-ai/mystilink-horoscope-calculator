@@ -1,0 +1,29 @@
+{
+  "title": "MonthlyFortuneResponse",
+  "type": "object",
+  "required": ["kind", "year", "month", "samples", "summary"],
+  "properties": {
+    "kind": { "const": "monthly" },
+    "year": { "type": "integer" },
+    "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "sample_dates": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "samples": { "type": "array" },
+    "sun_sign_path": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "mid_month_sun": { "type": "object" },
+    "summary": {
+      "type": "object",
+      "required": [
+        "aspect_counts_total",
+        "hard_aspect_count_total",
+        "soft_aspect_count_total",
+        "overall_tone"
+      ]
+    }
+  }
+}

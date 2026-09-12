@@ -1,0 +1,198 @@
+"""CLI for natal, daily, and monthly horoscope calculations. JSON on stdout."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from typing import Any
+
+from mystilink_horoscope import __version__
+from mystilink_horoscope.daily import calculate_daily
+from mystilink_horoscope.monthly import calculate_monthly
+from mystilink_horoscope.natal import (
+    SIDEREAL_MODE_NAMES,
+    calculate_chart,
+    parse_local_datetime,
+    to_serializable,
+)
+
+
+def _emit(payload: dict[str, Any]) -> None:
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+def _add_birth_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--datetime",
+        required=True,
+        help='Birth local datetime "YYYY-MM-DD HH:MM"',
+    )
+    parser.add_argument(
+        "--timezone",
+        required=True,
+        help="IANA timezone name",
+    )
+    parser.add_argument("--lat", type=float, required=True, help="Latitude degrees")
+    parser.add_argument(
+        "--lon",
+        type=float,
+        required=True,
+        help="Longitude degrees (east positive)",
+    )
+    parser.add_argument(
+        "--house-system",
+        default="P",
+        help="House system code (default: P Placidus)",
+    )
+    parser.add_argument(
+        "--zodiac",
+        choices=["tropical", "sidereal"],
+        default="tropical",
+        help="Zodiac mode (default: tropical)",
+    )
+    parser.add_argument(
+        "--sidereal-mode",
+        default="lahiri",
+        choices=list(SIDEREAL_MODE_NAMES),
+        help="Sidereal ayanamsa when --zodiac sidereal (default: lahiri)",
+    )
+    parser.add_argument(
+        "--true-solar-time",
+        action="store_true",
+        help="Apply true solar time correction to birth time",
+    )
+
+
+def _cmd_natal(args: argparse.Namespace) -> int:
+    try:
+        local_dt = parse_local_datetime(args.datetime, args.timezone)
+    except Exception as exc:
+        print(f"Invalid datetime/timezone: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        result = calculate_chart(
+            local_dt,
+            args.lat,
+            args.lon,
+            house_system=args.house_system,
+            zodiac_mode=args.zodiac,
+            sidereal_mode=args.sidereal_mode,
+            use_true_solar_time=args.true_solar_time,
+            include_aspects=not args.no_aspects,
+        )
+    except Exception as exc:
+        print(f"Calculation failed: {exc}", file=sys.stderr)
+        return 1
+
+    payload = to_serializable(result)
+    payload["kind"] = "natal"
+    _emit(payload)
+    return 0
+
+
+def _cmd_daily(args: argparse.Namespace) -> int:
+    try:
+        payload = calculate_daily(
+            birth_datetime=args.datetime,
+            timezone_name=args.timezone,
+            latitude=args.lat,
+            longitude=args.lon,
+            target_date=args.date,
+            house_system=args.house_system,
+            zodiac_mode=args.zodiac,
+            sidereal_mode=args.sidereal_mode,
+            use_true_solar_time=args.true_solar_time,
+            transit_time=args.transit_time,
+        )
+    except Exception as exc:
+        print(f"Calculation failed: {exc}", file=sys.stderr)
+        return 1
+    _emit(payload)
+    return 0
+
+
+def _cmd_monthly(args: argparse.Namespace) -> int:
+    try:
+        payload = calculate_monthly(
+            birth_datetime=args.datetime,
+            timezone_name=args.timezone,
+            latitude=args.lat,
+            longitude=args.lon,
+            year=args.year,
+            month=args.month,
+            house_system=args.house_system,
+            zodiac_mode=args.zodiac,
+            sidereal_mode=args.sidereal_mode,
+            use_true_solar_time=args.true_solar_time,
+        )
+    except Exception as exc:
+        print(f"Calculation failed: {exc}", file=sys.stderr)
+        return 1
+    _emit(payload)
+    return 0
+
+
+def _cmd_version(_: argparse.Namespace) -> int:
+    _emit({"name": "mystilink-horoscope", "version": __version__})
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="mystilink-horoscope",
+        description="Natal chart, daily transit, and monthly overview calculator.",
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_natal = sub.add_parser("natal", help="Calculate natal chart JSON")
+    _add_birth_args(p_natal)
+    p_natal.add_argument(
+        "--no-aspects",
+        action="store_true",
+        help="Omit major natal aspects",
+    )
+    p_natal.set_defaults(func=_cmd_natal)
+
+    p_daily = sub.add_parser(
+        "daily",
+        help="Transit sky for a date vs natal; aspects and theme scores",
+    )
+    _add_birth_args(p_daily)
+    p_daily.add_argument(
+        "--date",
+        required=True,
+        help="Target date YYYY-MM-DD",
+    )
+    p_daily.add_argument(
+        "--transit-time",
+        default=None,
+        help='Optional transit local time HH:MM (default: 12:00)',
+    )
+    p_daily.set_defaults(func=_cmd_daily)
+
+    p_monthly = sub.add_parser(
+        "monthly",
+        help="Monthly overview from sampled transits vs natal",
+    )
+    _add_birth_args(p_monthly)
+    p_monthly.add_argument("--year", type=int, required=True, help="Target year")
+    p_monthly.add_argument("--month", type=int, required=True, help="Target month 1-12")
+    p_monthly.set_defaults(func=_cmd_monthly)
+
+    p_ver = sub.add_parser("version", help="Print version JSON")
+    p_ver.set_defaults(func=_cmd_version)
+
+    return parser
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    code = args.func(args)
+    raise SystemExit(code)
+
+
+if __name__ == "__main__":
+    main()

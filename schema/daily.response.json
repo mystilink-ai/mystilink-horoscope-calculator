@@ -1,0 +1,35 @@
+{
+  "title": "DailyFortuneResponse",
+  "type": "object",
+  "required": [
+    "kind",
+    "target_date",
+    "transit_points",
+    "aspects_to_natal",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "daily" },
+    "target_date": { "type": "string" },
+    "transit_datetime": { "type": "string" },
+    "timezone": { "type": "string" },
+    "natal": { "type": "object" },
+    "transit_points": { "type": "array" },
+    "aspects_to_natal": { "type": "array" },
+    "summary": {
+      "type": "object",
+      "required": ["aspect_counts", "themes", "overall_tone"],
+      "properties": {
+        "aspect_counts": { "type": "object" },
+        "hard_aspect_count": { "type": "integer" },
+        "soft_aspect_count": { "type": "integer" },
+        "total_aspects": { "type": "integer" },
+        "themes": { "type": "object" },
+        "overall_tone": {
+          "type": "string",
+          "enum": ["supportive", "challenging", "mixed"]
+        }
+      }
+    }
+  }
+}

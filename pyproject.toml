@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mystilink-horoscope-calculator"
+version = "0.1.0"
+description = "Natal chart, daily transit, and monthly fortune calculator (Swiss Ephemeris)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "MystiLink" }]
+keywords = ["horoscope", "natal", "transit", "astrology", "cli"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Operating System :: OS Independent",
+  "Environment :: Console",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "pyswisseph",
+]
+
+[project.scripts]
+mystilink-horoscope = "mystilink_horoscope.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["mystilink_horoscope*"]

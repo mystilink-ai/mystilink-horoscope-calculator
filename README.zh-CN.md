@@ -1,4 +1,4 @@
-# MystiLink 占星计算器
+# Mystilink 占星计算器
 
 > Languages: [English](README.md) | [简体中文](README.zh-CN.md)
 

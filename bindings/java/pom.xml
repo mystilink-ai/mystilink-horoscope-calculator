@@ -4,7 +4,7 @@
   <groupId>com.mystilink</groupId>
   <artifactId>horoscope</artifactId>
   <version>0.1.0</version>
-  <name>MystiLink Horoscope</name>
+  <name>Mystilink Horoscope</name>
   <description>CLI binding for mystilink-horoscope calculator</description>
   <licenses>
     <license>

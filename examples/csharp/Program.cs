@@ -1,5 +1,5 @@
 using System;
-using MystiLink.Horoscope;
+using Mystilink.Horoscope;
 
 class Program
 {

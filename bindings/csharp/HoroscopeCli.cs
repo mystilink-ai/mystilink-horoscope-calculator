@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace MystiLink.Horoscope;
+namespace Mystilink.Horoscope;
 
 /// <summary>
 /// Spawns mystilink-horoscope (or MYSTILINK_HOROSCOPE_CLI) and returns JSON stdout.

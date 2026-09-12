@@ -31,3 +31,6 @@ htmlcov/
 .env
 .env.*
 !*.env.example
+
+# Local editor / agent config (do not publish)
+.cursor/

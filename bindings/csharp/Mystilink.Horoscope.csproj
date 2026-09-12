@@ -3,11 +3,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>MystiLink.Horoscope</RootNamespace>
-    <AssemblyName>MystiLink.Horoscope</AssemblyName>
+    <RootNamespace>Mystilink.Horoscope</RootNamespace>
+    <AssemblyName>Mystilink.Horoscope</AssemblyName>
     <Version>0.1.0</Version>
-    <PackageId>MystiLink.Horoscope</PackageId>
-    <Authors>MystiLink</Authors>
+    <PackageId>Mystilink.Horoscope</PackageId>
+    <Authors>Mystilink</Authors>
     <Description>CLI binding for mystilink-horoscope calculator</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>

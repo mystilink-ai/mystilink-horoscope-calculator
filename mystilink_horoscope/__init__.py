@@ -1,4 +1,4 @@
-"""MystiLink horoscope calculator: natal, daily transit, monthly overview."""
+"""Mystilink horoscope calculator: natal, daily transit, monthly overview."""
 
 from __future__ import annotations
 

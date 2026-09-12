@@ -6,6 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../bindings/csharp/MystiLink.Horoscope.csproj" />
+    <ProjectReference Include="../../bindings/csharp/Mystilink.Horoscope.csproj" />
   </ItemGroup>
 </Project>

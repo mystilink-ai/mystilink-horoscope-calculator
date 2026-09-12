@@ -9,7 +9,7 @@ description = "Natal chart, daily transit, and monthly fortune calculator (Swiss
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
-authors = [{ name = "MystiLink" }]
+authors = [{ name = "Mystilink" }]
 keywords = ["horoscope", "natal", "transit", "astrology", "cli"]
 classifiers = [
   "License :: OSI Approved :: MIT License",

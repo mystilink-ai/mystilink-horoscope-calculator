@@ -5,9 +5,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from typing import Any
+from typing import Any, Optional, Tuple
 
 from mystilink_horoscope import __version__
+from mystilink_horoscope.birth import BirthProfileError, load_json_arg, parse_birth_profile
 from mystilink_horoscope.daily import calculate_daily
 from mystilink_horoscope.monthly import calculate_monthly
 from mystilink_horoscope.natal import (
@@ -22,23 +23,37 @@ def _emit(payload: dict[str, Any]) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
+def _emit_error(message: str, code: int = 2) -> int:
+    print(json.dumps({"error": message}, ensure_ascii=False), file=sys.stderr)
+    return code
+
+
 def _add_birth_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--datetime",
-        required=True,
-        help='Birth local datetime "YYYY-MM-DD HH:MM"',
+        required=False,
+        default=None,
+        help='Birth local datetime "YYYY-MM-DD HH:MM" (required unless --birth-json)',
     )
     parser.add_argument(
         "--timezone",
-        required=True,
-        help="IANA timezone name",
+        required=False,
+        default=None,
+        help="IANA timezone name (required unless --birth-json)",
     )
-    parser.add_argument("--lat", type=float, required=True, help="Latitude degrees")
+    parser.add_argument(
+        "--lat",
+        type=float,
+        required=False,
+        default=None,
+        help="Latitude degrees (required unless BirthProfile place.lat)",
+    )
     parser.add_argument(
         "--lon",
         type=float,
-        required=True,
-        help="Longitude degrees (east positive)",
+        required=False,
+        default=None,
+        help="Longitude degrees east positive (required unless BirthProfile)",
     )
     parser.add_argument(
         "--house-system",
@@ -62,29 +77,76 @@ def _add_birth_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Apply true solar time correction to birth time",
     )
+    parser.add_argument(
+        "--birth-json",
+        type=str,
+        default=None,
+        help=(
+            "BirthProfile JSON (mystilink.birth/0.1): file path, '-' for stdin, "
+            "or inline JSON"
+        ),
+    )
+
+
+def _resolve_birth(
+    args: argparse.Namespace,
+) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float], bool, Optional[str]]:
+    """Return (datetime, timezone, lat, lon, true_solar, error)."""
+    datetime_str = args.datetime
+    timezone = args.timezone
+    lat = args.lat
+    lon = args.lon
+    true_solar = bool(args.true_solar_time)
+
+    if args.birth_json:
+        try:
+            profile = parse_birth_profile(load_json_arg(args.birth_json))
+        except (BirthProfileError, OSError) as exc:
+            return None, None, None, None, False, str(exc)
+        datetime_str = profile.datetime_str
+        if timezone is None:
+            timezone = profile.timezone
+        if lat is None:
+            lat = profile.latitude
+        if lon is None:
+            lon = profile.longitude
+        if profile.true_solar_time:
+            true_solar = True
+
+    if not datetime_str or not timezone:
+        return None, None, None, None, False, (
+            "either --datetime/--timezone/--lat/--lon or --birth-json is required"
+        )
+    if lat is None or lon is None:
+        return None, None, None, None, False, (
+            "latitude and longitude are required (CLI flags or BirthProfile place/birth)"
+        )
+    return datetime_str, timezone, lat, lon, true_solar, None
 
 
 def _cmd_natal(args: argparse.Namespace) -> int:
+    datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
+    if err:
+        return _emit_error(err)
+
     try:
-        local_dt = parse_local_datetime(args.datetime, args.timezone)
+        local_dt = parse_local_datetime(datetime_str, timezone)  # type: ignore[arg-type]
     except Exception as exc:
-        print(f"Invalid datetime/timezone: {exc}", file=sys.stderr)
-        return 2
+        return _emit_error(f"Invalid datetime/timezone: {exc}")
 
     try:
         result = calculate_chart(
             local_dt,
-            args.lat,
-            args.lon,
+            lat,  # type: ignore[arg-type]
+            lon,  # type: ignore[arg-type]
             house_system=args.house_system,
             zodiac_mode=args.zodiac,
             sidereal_mode=args.sidereal_mode,
-            use_true_solar_time=args.true_solar_time,
+            use_true_solar_time=true_solar,
             include_aspects=not args.no_aspects,
         )
     except Exception as exc:
-        print(f"Calculation failed: {exc}", file=sys.stderr)
-        return 1
+        return _emit_error(f"Calculation failed: {exc}", code=1)
 
     payload = to_serializable(result)
     payload["kind"] = "natal"
@@ -93,43 +155,47 @@ def _cmd_natal(args: argparse.Namespace) -> int:
 
 
 def _cmd_daily(args: argparse.Namespace) -> int:
+    datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
+    if err:
+        return _emit_error(err)
     try:
         payload = calculate_daily(
-            birth_datetime=args.datetime,
-            timezone_name=args.timezone,
-            latitude=args.lat,
-            longitude=args.lon,
+            birth_datetime=datetime_str,  # type: ignore[arg-type]
+            timezone_name=timezone,  # type: ignore[arg-type]
+            latitude=lat,  # type: ignore[arg-type]
+            longitude=lon,  # type: ignore[arg-type]
             target_date=args.date,
             house_system=args.house_system,
             zodiac_mode=args.zodiac,
             sidereal_mode=args.sidereal_mode,
-            use_true_solar_time=args.true_solar_time,
+            use_true_solar_time=true_solar,
             transit_time=args.transit_time,
         )
     except Exception as exc:
-        print(f"Calculation failed: {exc}", file=sys.stderr)
-        return 1
+        return _emit_error(f"Calculation failed: {exc}", code=1)
     _emit(payload)
     return 0
 
 
 def _cmd_monthly(args: argparse.Namespace) -> int:
+    datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
+    if err:
+        return _emit_error(err)
     try:
         payload = calculate_monthly(
-            birth_datetime=args.datetime,
-            timezone_name=args.timezone,
-            latitude=args.lat,
-            longitude=args.lon,
+            birth_datetime=datetime_str,  # type: ignore[arg-type]
+            timezone_name=timezone,  # type: ignore[arg-type]
+            latitude=lat,  # type: ignore[arg-type]
+            longitude=lon,  # type: ignore[arg-type]
             year=args.year,
             month=args.month,
             house_system=args.house_system,
             zodiac_mode=args.zodiac,
             sidereal_mode=args.sidereal_mode,
-            use_true_solar_time=args.true_solar_time,
+            use_true_solar_time=true_solar,
         )
     except Exception as exc:
-        print(f"Calculation failed: {exc}", file=sys.stderr)
-        return 1
+        return _emit_error(f"Calculation failed: {exc}", code=1)
     _emit(payload)
     return 0
 
@@ -168,7 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_daily.add_argument(
         "--transit-time",
         default=None,
-        help='Optional transit local time HH:MM (default: 12:00)',
+        help="Optional transit local time HH:MM (default: 12:00)",
     )
     p_daily.set_defaults(func=_cmd_daily)
 

@@ -56,7 +56,11 @@ mystilink-horoscope natal \
   [--sidereal-mode lahiri] \
   [--true-solar-time] \
   [--no-aspects]
+
+mystilink-horoscope natal --birth-json tests/fixtures/birth.profile.v0.json [--no-aspects]
 ```
+
+Natal JSON includes `schema_version`: `mystilink.horoscope.natal/0.1`, plus legacy `points` and contract alias `planets`.
 
 ### Daily
 

@@ -249,7 +249,10 @@ def aspect_to_dict(a: Aspect) -> dict[str, Any]:
 def to_serializable(result: dict) -> dict:
     serializable = dict(result)
     serializable["points"] = [point_to_dict(p) for p in result["points"]]
+    serializable["planets"] = serializable["points"]  # contract alias (mystilink.horoscope.natal)
     serializable["aspects"] = [aspect_to_dict(a) for a in result["aspects"]]
+    if "schema_version" not in serializable:
+        serializable["schema_version"] = "mystilink.horoscope.natal/0.1"
     return serializable
 
 
@@ -349,6 +352,7 @@ def calculate_chart(
     mc_sign, mc_degree = zodiac_from_longitude(mc)
 
     return {
+        "schema_version": "mystilink.horoscope.natal/0.1",
         "local_datetime": local_dt.isoformat(),
         "effective_local_datetime": effective_local_dt.isoformat(),
         "utc_datetime": utc_dt.isoformat(),

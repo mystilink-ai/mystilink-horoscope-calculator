@@ -120,6 +120,7 @@ def calculate_monthly(
         mid_sun_sign, mid_sun_degree = zodiac_from_longitude(mid_sun_lon)
 
     return {
+        "schema_version": "mystilink.horoscope.monthly/0.1",
         "kind": "monthly",
         "year": year,
         "month": month,

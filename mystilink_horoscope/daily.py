@@ -154,6 +154,7 @@ def calculate_daily(
     soft_count = sum(counts[k] for k in ("Trine", "Sextile"))
 
     return {
+        "schema_version": "mystilink.horoscope.daily/0.1",
         "kind": "daily",
         "target_date": target_date,
         "transit_datetime": transit["local_datetime"],

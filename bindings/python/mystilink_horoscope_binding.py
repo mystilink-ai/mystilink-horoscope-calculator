@@ -15,7 +15,14 @@ from mystilink_horoscope.natal import calculate_chart, parse_local_datetime, to_
 
 def resolve_cli() -> str:
     env = os.environ.get("MYSTILINK_HOROSCOPE_CLI", "").strip()
-    return env or "mystilink-horoscope"
+    if env:
+        return env
+    import shutil
+
+    for name in ("horoscope", "mystilink-horoscope"):
+        if shutil.which(name):
+            return name
+    return "horoscope"
 
 
 def run_cli(args: Sequence[str]) -> dict[str, Any]:

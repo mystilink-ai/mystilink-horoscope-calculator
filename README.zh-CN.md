@@ -135,6 +135,9 @@ monthly = calculate_monthly(
 python examples/python/example.py
 ```
 
+
+可选 `--envelope` 将结果包装为 `mystilink.envelope/0.1`（默认仍为裸 JSON）。
+
 ## 限制
 
 - 需要 `pyswisseph`。缺少 Swiss Ephemeris 数据文件时，可能回退 Moshier。

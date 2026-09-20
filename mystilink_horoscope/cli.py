@@ -11,6 +11,7 @@ from mystilink_horoscope import __version__
 from mystilink_horoscope.birth import BirthProfileError, load_json_arg, parse_birth_profile
 from mystilink_horoscope.daily import calculate_daily
 from mystilink_horoscope.monthly import calculate_monthly
+from mystilink_horoscope.envelope import build_subject, structured_error, wrap_envelope
 from mystilink_horoscope.natal import (
     SIDEREAL_MODE_NAMES,
     calculate_chart,
@@ -23,8 +24,11 @@ def _emit(payload: dict[str, Any]) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
-def _emit_error(message: str, code: int = 2) -> int:
-    print(json.dumps({"error": message}, ensure_ascii=False), file=sys.stderr)
+def _emit_error(message: str, code: int = 2, *, envelope: bool = False) -> int:
+    if envelope:
+        print(json.dumps(structured_error("error", message), ensure_ascii=False), file=sys.stderr)
+    else:
+        print(json.dumps({"error": message}, ensure_ascii=False), file=sys.stderr)
     return code
 
 
@@ -86,6 +90,12 @@ def _add_birth_args(parser: argparse.ArgumentParser) -> None:
             "or inline JSON"
         ),
     )
+    parser.add_argument(
+        "--envelope",
+        action="store_true",
+        help="Wrap chart as mystilink.envelope/0.1 (default: bare chart JSON)",
+    )
+    parser.add_argument("--locale", type=str, default=None, help="BCP 47 locale for envelope")
 
 
 def _resolve_birth(
@@ -124,15 +134,45 @@ def _resolve_birth(
     return datetime_str, timezone, lat, lon, true_solar, None
 
 
+
+def _maybe_envelope(args: argparse.Namespace, chart: dict[str, Any], *, datetime_str: str | None, timezone: str | None, lon: float | None) -> dict[str, Any]:
+    if not getattr(args, "envelope", False):
+        return chart
+    profile = None
+    if args.birth_json:
+        try:
+            profile = load_json_arg(args.birth_json)
+        except Exception:
+            profile = None
+    dt_iso = None
+    if datetime_str and timezone:
+        try:
+            dt_iso = parse_local_datetime(datetime_str, timezone).isoformat()
+        except Exception:
+            dt_iso = None
+    subject = build_subject(
+        birth_profile=profile if isinstance(profile, dict) else None,
+        datetime_iso=dt_iso,
+        timezone_name=timezone,
+        longitude=lon,
+    )
+    return wrap_envelope(
+        system="horoscope",
+        chart=chart,
+        subject=subject,
+        locale=getattr(args, "locale", None),
+        produced_by=f"mystilink-horoscope-calculator@{__version__}",
+    )
+
 def _cmd_natal(args: argparse.Namespace) -> int:
     datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
     if err:
-        return _emit_error(err)
+        return _emit_error(err, envelope=bool(getattr(args, "envelope", False)))
 
     try:
         local_dt = parse_local_datetime(datetime_str, timezone)  # type: ignore[arg-type]
     except Exception as exc:
-        return _emit_error(f"Invalid datetime/timezone: {exc}")
+        return _emit_error(f"Invalid datetime/timezone: {exc}", envelope=bool(getattr(args, "envelope", False)))
 
     try:
         result = calculate_chart(
@@ -146,18 +186,18 @@ def _cmd_natal(args: argparse.Namespace) -> int:
             include_aspects=not args.no_aspects,
         )
     except Exception as exc:
-        return _emit_error(f"Calculation failed: {exc}", code=1)
+        return _emit_error(f"Calculation failed: {exc}", code=1, envelope=bool(getattr(args, "envelope", False)))
 
     payload = to_serializable(result)
     payload["kind"] = "natal"
-    _emit(payload)
+    _emit(_maybe_envelope(args, payload, datetime_str=datetime_str, timezone=timezone, lon=lon))
     return 0
 
 
 def _cmd_daily(args: argparse.Namespace) -> int:
     datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
     if err:
-        return _emit_error(err)
+        return _emit_error(err, envelope=bool(getattr(args, "envelope", False)))
     try:
         payload = calculate_daily(
             birth_datetime=datetime_str,  # type: ignore[arg-type]
@@ -172,15 +212,15 @@ def _cmd_daily(args: argparse.Namespace) -> int:
             transit_time=args.transit_time,
         )
     except Exception as exc:
-        return _emit_error(f"Calculation failed: {exc}", code=1)
-    _emit(payload)
+        return _emit_error(f"Calculation failed: {exc}", code=1, envelope=bool(getattr(args, "envelope", False)))
+    _emit(_maybe_envelope(args, payload, datetime_str=datetime_str, timezone=timezone, lon=lon))
     return 0
 
 
 def _cmd_monthly(args: argparse.Namespace) -> int:
     datetime_str, timezone, lat, lon, true_solar, err = _resolve_birth(args)
     if err:
-        return _emit_error(err)
+        return _emit_error(err, envelope=bool(getattr(args, "envelope", False)))
     try:
         payload = calculate_monthly(
             birth_datetime=datetime_str,  # type: ignore[arg-type]
@@ -195,8 +235,8 @@ def _cmd_monthly(args: argparse.Namespace) -> int:
             use_true_solar_time=true_solar,
         )
     except Exception as exc:
-        return _emit_error(f"Calculation failed: {exc}", code=1)
-    _emit(payload)
+        return _emit_error(f"Calculation failed: {exc}", code=1, envelope=bool(getattr(args, "envelope", False)))
+    _emit(_maybe_envelope(args, payload, datetime_str=datetime_str, timezone=timezone, lon=lon))
     return 0
 
 

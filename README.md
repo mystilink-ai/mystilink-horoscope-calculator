@@ -139,6 +139,9 @@ Sample golden inputs live in `tests/fixtures/`. Run the Python example after ins
 python examples/python/example.py
 ```
 
+
+Optional `--envelope` wraps the result as `mystilink.envelope/0.1` (default remains bare JSON).
+
 ## Limits
 
 - Requires `pyswisseph`. Without Swiss Ephemeris data files, calculation falls back to the Moshier method when possible.

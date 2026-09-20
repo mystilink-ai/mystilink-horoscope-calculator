@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+- CLI natal/daily/monthly `--envelope` / `--locale`
+- Python binding resolves short CLI `horoscope` before `mystilink-horoscope`
+- Default stdout remains bare chart JSON
+
 ## 0.2.1
 
 - Primary CLI entry point is `horoscope`; alias `mystilink-horoscope` remains installed

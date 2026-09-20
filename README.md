@@ -13,7 +13,7 @@ This repository is a **calculation library / CLI**. It does not produce prose fo
 | Layer | Delivery |
 |-------|----------|
 | Python | Installable package `mystilink-horoscope-calculator` + library API |
-| CLI | `mystilink-horoscope` (natal / daily / monthly / version) |
+| CLI | `horoscope` (natal / daily / monthly / version) |
 | C | Header + source that spawn the CLI (`bindings/c`) |
 | C++ | Thin wrapper over the C binding (`bindings/cpp`) |
 | C# | .NET library spawning the CLI (`bindings/csharp`) |
@@ -22,7 +22,7 @@ This repository is a **calculation library / CLI**. It does not produce prose fo
 
 Examples live under `examples/{c,cpp,csharp,java,js,node,python}/`.
 
-Language bindings resolve the executable as `MYSTILINK_HOROSCOPE_CLI` if set, otherwise `mystilink-horoscope` on `PATH`.
+Language bindings resolve the executable as `MYSTILINK_HOROSCOPE_CLI` if set, otherwise `horoscope` on `PATH`. Alias `mystilink-horoscope` remains installed.
 
 ## Requirements
 
@@ -37,7 +37,7 @@ From the repository root:
 pip install -e .
 ```
 
-This installs the library and the `mystilink-horoscope` console script.
+This installs the library and the `horoscope` console script.
 
 ## CLI
 
@@ -46,7 +46,7 @@ All subcommands print UTF-8 JSON to stdout. Non-zero exit codes write errors to 
 ### Natal
 
 ```bash
-mystilink-horoscope natal \
+horoscope natal \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -57,7 +57,7 @@ mystilink-horoscope natal \
   [--true-solar-time] \
   [--no-aspects]
 
-mystilink-horoscope natal --birth-json tests/fixtures/birth.profile.v0.json [--no-aspects]
+horoscope natal --birth-json tests/fixtures/birth.profile.v0.json [--no-aspects]
 ```
 
 Natal JSON includes `schema_version`: `mystilink.horoscope.natal/0.1`, plus legacy `points` and contract alias `planets`.
@@ -67,7 +67,7 @@ Natal JSON includes `schema_version`: `mystilink.horoscope.natal/0.1`, plus lega
 Natal birth data plus a target calendar date. Transit time defaults to local noon (`12:00`); override with `--transit-time HH:MM`.
 
 ```bash
-mystilink-horoscope daily \
+horoscope daily \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -82,7 +82,7 @@ Response highlights: `transit_points`, `aspects_to_natal`, `summary.aspect_count
 Samples the 1st, mid (15th or last), and last day of the month at local noon; aggregates Sun sign path and aspect pressure.
 
 ```bash
-mystilink-horoscope monthly \
+horoscope monthly \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -94,7 +94,7 @@ mystilink-horoscope monthly \
 ### Version
 
 ```bash
-mystilink-horoscope version
+horoscope version
 ```
 
 ## Python API

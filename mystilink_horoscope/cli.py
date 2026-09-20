@@ -201,13 +201,13 @@ def _cmd_monthly(args: argparse.Namespace) -> int:
 
 
 def _cmd_version(_: argparse.Namespace) -> int:
-    _emit({"name": "mystilink-horoscope", "version": __version__})
+    _emit({"name": "mystilink-horoscope-calculator", "version": __version__, "cli": "horoscope"})
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="mystilink-horoscope",
+        prog="horoscope",
         description="Natal chart, daily transit, and monthly overview calculator.",
     )
     sub = parser.add_subparsers(dest="command", required=True)

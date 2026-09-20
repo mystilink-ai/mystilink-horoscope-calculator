@@ -13,7 +13,7 @@ public static class HoroscopeCli
     public static string ResolveCli()
     {
         var env = Environment.GetEnvironmentVariable("MYSTILINK_HOROSCOPE_CLI");
-        return string.IsNullOrWhiteSpace(env) ? "mystilink-horoscope" : env;
+        return string.IsNullOrWhiteSpace(env) ? "horoscope" : env;
     }
 
     public static string Run(params string[] args)

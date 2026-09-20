@@ -8,7 +8,7 @@ import {
 
 export function resolveCli() {
   const env = process.env.MYSTILINK_HOROSCOPE_CLI;
-  return env && env.trim() ? env.trim() : "mystilink-horoscope";
+  return env && env.trim() ? env.trim() : "horoscope";
 }
 
 export function createNodeRunner(cliPath = resolveCli()) {

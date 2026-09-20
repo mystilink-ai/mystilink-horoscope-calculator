@@ -18,7 +18,7 @@ static const char *resolve_cli(void) {
   if (env && env[0]) {
     return env;
   }
-  return "mystilink-horoscope";
+  return "horoscope";
 }
 
 static char *read_all(FILE *fp) {

@@ -13,7 +13,7 @@
 | 层级 | 交付 |
 |------|------|
 | Python | 可安装包 `mystilink-horoscope-calculator` + 库 API |
-| CLI | `mystilink-horoscope`（natal / daily / monthly / version） |
+| CLI | `horoscope`（natal / daily / monthly / version） |
 | C | 头文件 + 源码，子进程调用 CLI（`bindings/c`） |
 | C++ | 对 C 绑定的薄封装（`bindings/cpp`） |
 | C# | .NET 库，子进程调用 CLI（`bindings/csharp`） |
@@ -22,7 +22,7 @@
 
 示例位于 `examples/{c,cpp,csharp,java,js,node,python}/`。
 
-各语言绑定优先使用环境变量 `MYSTILINK_HOROSCOPE_CLI`；未设置时查找 PATH 上的 `mystilink-horoscope`。
+各语言绑定优先使用环境变量 `MYSTILINK_HOROSCOPE_CLI`；未设置时查找 PATH 上的 `horoscope`。长别名 `mystilink-horoscope` 仍会安装。
 
 ## 环境要求
 
@@ -37,7 +37,7 @@
 pip install -e .
 ```
 
-将安装库与控制台命令 `mystilink-horoscope`。
+将安装库与控制台命令 `horoscope`。
 
 ## CLI
 
@@ -46,7 +46,7 @@ pip install -e .
 ### 本命盘
 
 ```bash
-mystilink-horoscope natal \
+horoscope natal \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -63,7 +63,7 @@ mystilink-horoscope natal \
 本命出生数据 + 目标日期。行运时刻默认当地正午（`12:00`），可用 `--transit-time HH:MM` 覆盖。
 
 ```bash
-mystilink-horoscope daily \
+horoscope daily \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -78,7 +78,7 @@ mystilink-horoscope daily \
 对当月 1 日、月中（15 或月末）、月末正午采样，汇总太阳星座路径与相位压力。
 
 ```bash
-mystilink-horoscope monthly \
+horoscope monthly \
   --datetime "1990-06-15 14:30" \
   --timezone Asia/Shanghai \
   --lat 31.2304 \
@@ -90,7 +90,7 @@ mystilink-horoscope monthly \
 ### 版本
 
 ```bash
-mystilink-horoscope version
+horoscope version
 ```
 
 ## Python API

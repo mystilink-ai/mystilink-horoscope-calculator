@@ -18,7 +18,7 @@ public final class HoroscopeCli {
     if (env != null && !env.isBlank()) {
       return env;
     }
-    return "mystilink-horoscope";
+    return "horoscope";
   }
 
   public static String run(String... args) throws Exception {

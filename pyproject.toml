@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mystilink-horoscope-calculator"
-version = "0.2.0"
+version = "0.2.1"
 description = "Natal chart, daily transit, and monthly fortune calculator (Swiss Ephemeris)"
 readme = "README.md"
 license = { text = "MIT" }
@@ -24,7 +24,9 @@ dependencies = [
 ]
 
 [project.scripts]
+horoscope = "mystilink_horoscope.cli:main"
 mystilink-horoscope = "mystilink_horoscope.cli:main"
+
 
 [tool.setuptools.packages.find]
 include = ["mystilink_horoscope*"]

@@ -1,6 +1,6 @@
 # Mystilink Horoscope Calculator
 
-> Languages: [English](README.md) | [简体中文](README.zh-CN.md)
+> Languages: [English](README.md) | [简体中文](docs/i18n/README.zh-CN.md) | [繁體中文](docs/i18n/README.zh-TW.md) | [日本語](docs/i18n/README.ja.md) | [한국어](docs/i18n/README.ko.md) | [Français](docs/i18n/README.fr.md) | [Español](docs/i18n/README.es.md)
 
 ## Overview
 

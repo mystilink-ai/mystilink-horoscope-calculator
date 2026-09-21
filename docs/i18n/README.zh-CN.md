@@ -1,6 +1,6 @@
 # Mystilink 占星计算器
 
-> Languages: [English](README.md) | [简体中文](README.zh-CN.md)
+> Languages: [English](../../README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Español](README.es.md)
 
 ## 概述
 
@@ -146,4 +146,4 @@ python examples/python/example.py
 
 ## 许可
 
-MIT。见 [LICENSE](LICENSE)。
+MIT。见 [LICENSE](../../LICENSE)。

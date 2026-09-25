@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- Natal `to_serializable` also emits `zodiac_system` (alias of `zodiac_mode`)
+- Tests against sibling schemas for natal / daily / monthly when present
+
 ## 0.2.2
 
 - CLI natal/daily/monthly `--envelope` / `--locale`

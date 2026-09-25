@@ -253,6 +253,9 @@ def to_serializable(result: dict) -> dict:
     serializable["aspects"] = [aspect_to_dict(a) for a in result["aspects"]]
     if "schema_version" not in serializable:
         serializable["schema_version"] = "mystilink.horoscope.natal/0.1"
+    # Preferred contract field; keep zodiac_mode as legacy alias
+    if "zodiac_mode" in serializable and "zodiac_system" not in serializable:
+        serializable["zodiac_system"] = serializable["zodiac_mode"]
     return serializable
 
 

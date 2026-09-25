@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mystilink-horoscope-calculator"
-version = "0.2.2"
+version = "0.2.3"
 description = "Natal chart, daily transit, and monthly fortune calculator (Swiss Ephemeris)"
 readme = "README.md"
 license = { text = "MIT" }
